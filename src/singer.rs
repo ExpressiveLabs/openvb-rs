@@ -1,0 +1,127 @@
+use std::path::PathBuf;
+
+use serde::{Deserialize, Serialize};
+use uuid::Uuid;
+use anyhow::Result;
+
+use crate::utterance::FileDescriptor;
+
+#[derive(Default, Debug, Clone, Serialize, Deserialize)]
+pub struct Singer {
+    pub meta: Meta,
+    pub origin: Origin,
+    pub language: Language,
+    pub libraries: Vec<SingerResourceBundle>
+}
+
+impl Singer {
+    #[cfg(feature = "generator")]
+    pub fn new() -> Self {
+        Singer {
+            meta: Meta::default(),
+            origin: Origin::now(),
+            language: Language::default(),
+            libraries: vec![]
+        }
+    }
+
+    pub fn load(path: &PathBuf) -> Result<Self> {
+        // Get file extension
+        let ext = path.extension().unwrap().to_str().unwrap();
+
+        // Branch based on file extension: json or bin
+        match ext {
+            "json" => Self::load_json(path),
+            "bin" => Self::load_bin(path),
+            _ => Err(anyhow::anyhow!("Unsupported file extension: {}", ext))
+        }
+    }
+
+    fn load_bin(path: &PathBuf) -> Result<Self> {
+        let data = std::fs::read(path)?;
+        Ok(bincode::deserialize(&data)?)
+    }
+
+    fn load_json(path: &PathBuf) -> Result<Self> {
+        let data = std::fs::read_to_string(path)?;
+        Ok(serde_json::from_str(&data)?)
+    }
+
+    pub fn save(&self, path: &PathBuf) -> Result<()> {
+        // Get file extension
+        let ext = path.extension().unwrap().to_str().unwrap();
+
+        // Branch based on file extension: json or bin
+        match ext {
+            "json" => self.save_json(path),
+            "bin" => self.save_bin(path),
+            _ => Err(anyhow::anyhow!("Unsupported file extension: {}", ext))
+        }
+    }
+
+    fn save_bin(&self, path: &PathBuf) -> Result<()> {
+        let data = bincode::serialize(&self)?;
+        std::fs::write(path, data)?;
+        Ok(())
+    }
+
+    fn save_json(&self, path: &PathBuf) -> Result<()> {
+        let data = serde_json::to_string_pretty(&self)?;
+        std::fs::write(path, data)?;
+        Ok(())
+    }
+}
+
+#[derive(Default, Debug, Clone, Serialize, Deserialize)]
+pub struct Meta {
+    pub name: String,
+    pub uuid: Uuid,
+    pub icon: PathBuf
+}
+
+#[derive(Default, Debug, Clone, Serialize, Deserialize)]
+pub struct Origin {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub author: Option<Author>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub developer: Option<Author>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub publisher: Option<Author>,
+    pub application: String,
+    pub creation_date: String
+}
+
+impl Origin {
+    #[cfg(feature = "generator")]
+    pub fn now() -> Self {
+        Origin {
+            application: String::from("OpenVBgen"),
+            creation_date: chrono::Utc::now().to_rfc3339(),
+            ..Default::default()
+        }
+    }
+}
+
+#[derive(Default, Debug, Clone, Serialize, Deserialize)]
+pub struct Author {
+    pub name: String,
+    pub email: String,
+    pub url: String
+}
+
+#[derive(Default, Debug, Clone, Serialize, Deserialize)]
+pub struct Language {
+    pub default: String,
+    pub supported: Vec<String>
+}
+
+#[derive(Default, Debug, Clone, Serialize, Deserialize)]
+pub struct SingerResourceBundle {
+    pub name: String,
+    pub uuid: Uuid,
+    pub base_path: PathBuf,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub language: Option<Language>,
+    pub is_default: bool,
+    pub files: Vec<FileDescriptor>
+}
