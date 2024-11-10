@@ -1,6 +1,6 @@
 [package]
-name = "openvb-rs"
-version = "0.1.0"
+name = "openvb"
+version = "0.1.1"
 edition = "2021"
 
 [dependencies]
