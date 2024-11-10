@@ -4,14 +4,14 @@ use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 use anyhow::Result;
 
-use crate::utterance::FileDescriptor;
+use crate::{library::Library, utterance::FileDescriptor};
 
 #[derive(Default, Debug, Clone, Serialize, Deserialize)]
 pub struct Singer {
     pub meta: Meta,
     pub origin: Origin,
     pub language: Language,
-    pub libraries: Vec<SingerResourceBundle>
+    pub libraries: Vec<Library>
 }
 
 impl Singer {
@@ -113,15 +113,4 @@ pub struct Author {
 pub struct Language {
     pub default: String,
     pub supported: Vec<String>
-}
-
-#[derive(Default, Debug, Clone, Serialize, Deserialize)]
-pub struct SingerResourceBundle {
-    pub name: String,
-    pub uuid: Uuid,
-    pub base_path: PathBuf,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub language: Option<Language>,
-    pub is_default: bool,
-    pub files: Vec<FileDescriptor>
 }

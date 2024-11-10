@@ -3,6 +3,7 @@ pub mod utterance;
 pub mod encode;
 pub mod time;
 pub mod tools;
+pub mod library;
 
 #[cfg(feature = "generator")]
 pub mod parser;
