@@ -3,7 +3,7 @@ use std::path::PathBuf;
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
-use crate::{singer::Language, utterance::FileDescriptor};
+use crate::{singer::Language, time::Timestamp, utterance::{FileDescriptor, Utterance}};
 
 #[derive(Default, Debug, Clone, Serialize, Deserialize)]
 pub struct Library {
@@ -14,6 +14,12 @@ pub struct Library {
     pub language: Option<Language>,
     pub is_default: bool,
     pub files: Vec<FileDescriptor>
+}
+
+impl Library {
+    pub fn iter_labels(&self) -> impl Iterator<Item = &Utterance> {
+        self.files.iter().flat_map(|f| f.labels.iter())
+    }
 }
 
 impl Iterator for Library {
