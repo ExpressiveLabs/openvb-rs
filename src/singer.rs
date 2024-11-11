@@ -1,4 +1,4 @@
-use std::path::PathBuf;
+use std::{path::PathBuf, sync::Arc};
 
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
@@ -46,12 +46,14 @@ impl Singer {
         let data = std::fs::read_to_string(path)?;
         let mut res: Self = serde_json::from_str(&data)?;
 
+        let base_path = path.parent().unwrap().to_path_buf();
+
         for lib in res.libraries.iter_mut() {
             for file in lib.files.iter_mut() {
                 file.labels.sort_by(|a, b| a.start.value.cmp(&b.start.value));
 
                 for label in file.labels.iter_mut() {
-                    label.audio_path = file.path.clone();
+                    label.audio_path = base_path.join(&file.path);
                 }
             }
         }
@@ -85,7 +87,7 @@ impl Singer {
 
     pub fn get_default(&self) -> Option<&Library> {
         let r0 = self.libraries.iter().find(|lib| lib.is_default);
-        
+
         r0.or(self.libraries.first())
     }
 }
