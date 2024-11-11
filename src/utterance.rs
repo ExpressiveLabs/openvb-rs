@@ -24,7 +24,7 @@ pub struct FileDescriptor {
     pub labels: Vec<Utterance>
 }
 
-#[derive(Default, Debug, Clone, Serialize, Deserialize)]
+#[derive(Default, Debug, Clone, Serialize, Deserialize, Eq, PartialEq)]
 pub struct Utterance {
     pub prev: String,
     pub curr: String,

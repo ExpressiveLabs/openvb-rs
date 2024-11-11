@@ -1,9 +1,9 @@
-use std::path::{Path, PathBuf};
+use std::path::PathBuf;
 
 use serde::{Deserialize, Serialize};
-use anyhow::{Result, bail};
+use anyhow::Result;
 
-use crate::{parser::textgrid::from_textgrid, singer::SingerResourceBundle, tools::ipa::FromIPA, Singer};
+use crate::{library::Library, parser::textgrid::from_textgrid, tools::ipa::FromIPA, Singer};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 pub enum SourcePhoneset {
@@ -34,7 +34,7 @@ pub fn build(config: GeneratorConfig) -> Result<Singer> {
     let mut singer = Singer::new();
     singer.meta.name = config.name;
 
-    let mut lib = SingerResourceBundle::default();
+    let mut lib = Library::default();
     lib.name = "Default".to_string();
     lib.is_default = true;
 

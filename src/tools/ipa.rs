@@ -1,6 +1,6 @@
 use ipa_translate::{ipa_to_xsampa, xsampa_to_ipa};
 
-use crate::{encode::PhonemeEncoder, singer::SingerResourceBundle, utterance::{FileDescriptor, Utterance}, Singer};
+use crate::{encode::PhonemeEncoder, library::Library, utterance::{FileDescriptor, Utterance}, Singer};
 
 pub trait FromIPA {
     fn from_ipa(&mut self);
@@ -18,7 +18,7 @@ impl FromIPA for Singer {
     }
 }
 
-impl FromIPA for SingerResourceBundle {
+impl FromIPA for Library {
     fn from_ipa(&mut self) {
         for file in self.files.iter_mut() {
             file.from_ipa();
@@ -56,7 +56,7 @@ impl ToIPA for Singer {
     }
 }
 
-impl ToIPA for SingerResourceBundle {
+impl ToIPA for Library {
     fn to_ipa(&mut self) {
         for file in self.files.iter_mut() {
             file.to_ipa();
