@@ -49,6 +49,10 @@ impl Singer {
         for lib in res.libraries.iter_mut() {
             for file in lib.files.iter_mut() {
                 file.labels.sort_by(|a, b| a.start.value.cmp(&b.start.value));
+
+                for label in file.labels.iter_mut() {
+                    label.audio_path = file.path.clone();
+                }
             }
         }
 

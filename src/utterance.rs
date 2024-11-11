@@ -30,6 +30,9 @@ pub struct Utterance {
     pub curr: String,
     pub next: String,
 
+    #[serde(skip)]
+    pub audio_path: PathBuf,
+
     #[serde(skip_serializing_if = "Option::is_none")]
     pub language: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
