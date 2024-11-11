@@ -44,7 +44,15 @@ impl Singer {
 
     fn load_json(path: &PathBuf) -> Result<Self> {
         let data = std::fs::read_to_string(path)?;
-        Ok(serde_json::from_str(&data)?)
+        let mut res: Self = serde_json::from_str(&data)?;
+
+        for lib in res.libraries.iter_mut() {
+            for file in lib.files.iter_mut() {
+                file.labels.sort_by(|a, b| a.start.value.cmp(&b.start.value));
+            }
+        }
+
+        Ok(res)
     }
 
     pub fn save(&self, path: &PathBuf) -> Result<()> {
