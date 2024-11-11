@@ -82,6 +82,12 @@ impl Singer {
         std::fs::write(path, data)?;
         Ok(())
     }
+
+    pub fn get_default(&self) -> Option<&Library> {
+        let r0 = self.libraries.iter().find(|lib| lib.is_default);
+        
+        r0.or(self.libraries.first())
+    }
 }
 
 #[derive(Default, Debug, Clone, Serialize, Deserialize)]
