@@ -21,10 +21,13 @@ pub struct FileDescriptor {
     pub analysis_files: Option<HashMap<String, PathBuf>>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub language: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub extras: Option<HashMap<String, f32>>,
+    
     pub labels: Vec<Utterance>
 }
 
-#[derive(Default, Debug, Clone, Serialize, Deserialize, Eq, PartialEq)]
+#[derive(Default, Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct Utterance {
     pub prev: String,
     pub curr: String,
@@ -40,6 +43,9 @@ pub struct Utterance {
 
     pub start: Timestamp,
     pub end: Timestamp,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub extras: Option<HashMap<String, f32>>,
 
     pub flags: u8,
 
