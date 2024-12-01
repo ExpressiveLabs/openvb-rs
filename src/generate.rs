@@ -3,20 +3,23 @@ use std::path::PathBuf;
 use serde::{Deserialize, Serialize};
 use anyhow::Result;
 
-use crate::{library::Library, parser::textgrid::from_textgrid, tools::ipa::FromIPA, Singer};
+use crate::{library::Library, parser::textgrid::from_textgrid, utterance::FileDescriptor, tools::ipa::FromIPA, Singer};
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Default, Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 pub enum SourcePhoneset {
     Arpabet,
     IPA,
-    XSampa
+    XSampa,
+    #[default]
+    None
 }
 impl SourcePhoneset {
     pub fn to_string(&self) -> String {
         match self {
             SourcePhoneset::Arpabet => "arpabet".to_string(),
             SourcePhoneset::IPA => "ipa".to_string(),
-            SourcePhoneset::XSampa => "xsampa".to_string()
+            SourcePhoneset::XSampa => "xsampa".to_string(),
+            SourcePhoneset::None => "none".to_string()
         }
     }
 
@@ -25,23 +28,27 @@ impl SourcePhoneset {
             "arpabet" => SourcePhoneset::Arpabet,
             "ipa" => SourcePhoneset::IPA,
             "xsampa" => SourcePhoneset::XSampa,
+            "none" => SourcePhoneset::None,
             _ => panic!("Invalid phoneset")
         }
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Default, Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 pub enum SourceDataType {
     TextGrid,
     OtoIni,
-    Label
+    Label,
+    #[default]
+    Empty
 }
 impl SourceDataType {
     pub fn to_string(&self) -> String {
         match self {
             SourceDataType::TextGrid => "textgrid".to_string(),
             SourceDataType::OtoIni => "otoini".to_string(),
-            SourceDataType::Label => "label".to_string()
+            SourceDataType::Label => "label".to_string(),
+            SourceDataType::Empty => "empty".to_string()
         }
     }
 
@@ -50,6 +57,7 @@ impl SourceDataType {
             "textgrid" => SourceDataType::TextGrid,
             "otoini" => SourceDataType::OtoIni,
             "label" => SourceDataType::Label,
+            "empty" => SourceDataType::Empty,
             _ => panic!("Invalid data type")
         }
     }
@@ -99,6 +107,12 @@ impl GeneratorConfig {
                     },
                     SourceDataType::Label => {
                         unimplemented!()
+                    },
+                    SourceDataType::Empty => {
+                        Ok(FileDescriptor {
+                            path: file,
+                            ..Default::default()
+                        })
                     }
                 };
 
