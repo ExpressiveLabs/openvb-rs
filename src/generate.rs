@@ -11,12 +11,48 @@ pub enum SourcePhoneset {
     IPA,
     XSampa
 }
+impl SourcePhoneset {
+    pub fn to_string(&self) -> String {
+        match self {
+            SourcePhoneset::Arpabet => "arpabet".to_string(),
+            SourcePhoneset::IPA => "ipa".to_string(),
+            SourcePhoneset::XSampa => "xsampa".to_string()
+        }
+    }
+
+    pub fn from_string(s: &str) -> Self {
+        match s {
+            "arpabet" => SourcePhoneset::Arpabet,
+            "ipa" => SourcePhoneset::IPA,
+            "xsampa" => SourcePhoneset::XSampa,
+            _ => panic!("Invalid phoneset")
+        }
+    }
+}
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 pub enum SourceDataType {
     TextGrid,
     OtoIni,
     Label
+}
+impl SourceDataType {
+    pub fn to_string(&self) -> String {
+        match self {
+            SourceDataType::TextGrid => "textgrid".to_string(),
+            SourceDataType::OtoIni => "otoini".to_string(),
+            SourceDataType::Label => "label".to_string()
+        }
+    }
+
+    pub fn from_string(s: &str) -> Self {
+        match s {
+            "textgrid" => SourceDataType::TextGrid,
+            "otoini" => SourceDataType::OtoIni,
+            "label" => SourceDataType::Label,
+            _ => panic!("Invalid data type")
+        }
+    }
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
