@@ -16,7 +16,7 @@ pub struct FileDescriptor {
     pub path: PathBuf,
     pub aliases: Vec<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub pitch: Option<f32>,
+    pub pitch: Option<u8>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub analysis_files: Option<HashMap<String, PathBuf>>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -50,7 +50,7 @@ pub struct Utterance {
     pub flags: u8,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub areas: Option<HashMap<String, [u64; 2]>>,
+    pub areas: Option<HashMap<String, [Timestamp; 2]>>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub minified: Option<[u64; 3]>
 }
