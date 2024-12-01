@@ -64,73 +64,73 @@ pub struct GeneratorConfig {
     pub path: PathBuf
 }
 
-pub fn build(config: GeneratorConfig) -> Result<Singer> {
-    let path = config.path;
+impl GeneratorConfig {
+    pub fn build(&self) -> Result<Singer> {
+        let mut singer = Singer::new();
+        singer.meta.name = self.name.clone();
 
-    let mut singer = Singer::new();
-    singer.meta.name = config.name;
+        let mut lib = Library::default();
+        lib.name = "Default".to_string();
+        lib.is_default = true;
 
-    let mut lib = Library::default();
-    lib.name = "Default".to_string();
-    lib.is_default = true;
+        // Get all files in directory
+        let files = std::fs::read_dir(&self.path).unwrap();
 
-    // Get all files in directory
-    let files = std::fs::read_dir(&path).unwrap();
+        // Filter out non-wav files
+        let files = files.filter(|f| {
+            let file = f.as_ref().unwrap().path();
+            file.extension().unwrap().to_str().unwrap() == "wav"
+        }).map(|f| f.unwrap().path()).collect::<Vec<PathBuf>>();
 
-    // Filter out non-wav files
-    let files = files.filter(|f| {
-        let file = f.as_ref().unwrap().path();
-        file.extension().unwrap().to_str().unwrap() == "wav"
-    }).map(|f| f.unwrap().path()).collect::<Vec<PathBuf>>();
+        let pool = threadpool::ThreadPool::new(12);
+        let (tx, rx) = std::sync::mpsc::channel();
 
-    let pool = threadpool::ThreadPool::new(12);
-    let (tx, rx) = std::sync::mpsc::channel();
+        let files_len = files.len();
 
-    let files_len = files.len();
+        // Iterate over files
+        for file in tqdm::tqdm(files) {
+            let tx = tx.clone();
+            let data_type = self.data_type.clone();
+            pool.execute(move || {
+                let file = match data_type {
+                    SourceDataType::TextGrid => from_textgrid(&file, None),
+                    SourceDataType::OtoIni => {
+                        unimplemented!()
+                    },
+                    SourceDataType::Label => {
+                        unimplemented!()
+                    }
+                };
 
-    // Iterate over files
-    for file in tqdm::tqdm(files) {
-        let tx = tx.clone();
-        let data_type = config.data_type.clone();
-        pool.execute(move || {
-            let file = match data_type {
-                SourceDataType::TextGrid => from_textgrid(&file, None),
-                SourceDataType::OtoIni => {
-                    unimplemented!()
-                },
-                SourceDataType::Label => {
-                    unimplemented!()
+                if file.is_err() {
+                    println!("Error: {:?}", file.err().unwrap());
+                    tx.send(None).unwrap();
+                    return;
                 }
-            };
 
-            if file.is_err() {
-                println!("Error: {:?}", file.err().unwrap());
-                tx.send(None).unwrap();
-                return;
-            }
-
-            tx.send(Some(file.unwrap())).unwrap();
-        });
-    }
-
-    // Receive data
-    for _ in tqdm::tqdm(0..files_len) {
-        let file = rx.recv().unwrap();
-        if let Some(file) = file {
-            lib.files.push(file);
+                tx.send(Some(file.unwrap())).unwrap();
+            });
         }
+
+        // Receive data
+        for _ in tqdm::tqdm(0..files_len) {
+            let file = rx.recv().unwrap();
+            if let Some(file) = file {
+                lib.files.push(file);
+            }
+        }
+
+        // Register library
+        singer.libraries.push(lib);
+
+        // Convert phonemes if necessary
+        match self.phoneset {
+            SourcePhoneset::IPA => singer.from_ipa(),
+            _ => {}
+        }
+
+        Ok(singer)
     }
-
-    // Register library
-    singer.libraries.push(lib);
-
-    // Convert phonemes if necessary
-    match config.phoneset {
-        SourcePhoneset::IPA => singer.from_ipa(),
-        _ => {}
-    }
-
-    Ok(singer)
 }
 
 #[cfg(test)]
@@ -151,7 +151,7 @@ mod tests {
             language: String::from("en")
         };
 
-        let singer = build(cfg.clone()).unwrap();
+        let singer = cfg.build().unwrap();
 
         let path = cfg.path.join("singer.json");
         singer.save(&path).unwrap();

@@ -5,6 +5,8 @@ pub mod time;
 pub mod tools;
 pub mod library;
 
+pub mod prelude;
+
 #[cfg(feature = "generator")]
 pub mod parser;
 
