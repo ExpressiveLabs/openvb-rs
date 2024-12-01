@@ -13,7 +13,12 @@ pub struct Library {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub language: Option<Language>,
     pub is_default: bool,
-    pub files: Vec<FileDescriptor>
+    pub files: Vec<FileDescriptor>,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub flag_fields: Option<Vec<String>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub extra_fields: Option<Vec<(String, String)>>
 }
 
 impl Library {

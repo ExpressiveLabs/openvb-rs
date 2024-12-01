@@ -11,7 +11,12 @@ pub struct Singer {
     pub meta: Meta,
     pub origin: Origin,
     pub language: Language,
-    pub libraries: Vec<Library>
+    pub libraries: Vec<Library>,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub flag_fields: Option<Vec<String>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub extra_fields: Option<Vec<(String, String)>>
 }
 
 impl Singer {
