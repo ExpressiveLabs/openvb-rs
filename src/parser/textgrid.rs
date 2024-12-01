@@ -52,6 +52,7 @@ pub fn from_textgrid<P: AsRef<Path>>(audio_path: P, textgrid_path: Option<P>) ->
         // Parse timestamps
         utterance.start = Timestamp::from_seconds(*interval.xmin());
         utterance.end = Timestamp::from_seconds(*interval.xmax());
+        utterance.midpoint = (utterance.end - utterance.start) / 2.0 + utterance.start;
 
         // Parse annotation data
         utterance.prev = previous.clone();
@@ -86,6 +87,7 @@ pub fn from_textgrid<P: AsRef<Path>>(audio_path: P, textgrid_path: Option<P>) ->
         analysis_files: None,
         language: None,
         labels: utterances,
+        extras: None
     };
 
     Ok(file)

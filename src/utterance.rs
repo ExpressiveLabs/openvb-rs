@@ -42,6 +42,7 @@ pub struct Utterance {
     pub pitch: Option<u8>,
 
     pub start: Timestamp,
+    pub midpoint: Timestamp,
     pub end: Timestamp,
 
     #[serde(skip_serializing_if = "Option::is_none")]

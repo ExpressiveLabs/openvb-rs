@@ -26,7 +26,9 @@ impl Singer {
             meta: Meta::default(),
             origin: Origin::now(),
             language: Language::default(),
-            libraries: vec![]
+            libraries: vec![],
+
+            ..Default::default()
         }
     }
 

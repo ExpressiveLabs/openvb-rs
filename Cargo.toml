@@ -22,7 +22,7 @@ yin = {version = "0.2.0", optional = true}
 
 [features]
 default = []
-generator = ["textgridde-rs", "tqdm", "wavers", "yin", "chrono"]
+generator = ["textgridde-rs", "tqdm", "wavers", "yin", "chrono", "translate"]
 translate = ["ipa-translate"]
 
 [profile.dev]
