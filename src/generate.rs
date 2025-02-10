@@ -93,6 +93,9 @@ impl GeneratorConfig {
         let pool = threadpool::ThreadPool::new(12);
         let (tx, rx) = std::sync::mpsc::channel();
 
+        // Process only the first 20 files
+        let files = files.iter().take(200).map(|f| f.to_path_buf()).collect::<Vec<PathBuf>>();
+
         let files_len = files.len();
 
         // Iterate over files

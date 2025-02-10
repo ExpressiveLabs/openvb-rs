@@ -11,6 +11,8 @@ dotenv = "0.15.0"
 fixedbitset = "0.5.7"
 intbits = "0.2.0"
 ipa-translate = {version = "0.2.0", optional = true}
+rsworld = { version = "0.1.0", optional = true }
+rsworld-sys = { version = "0.1.0", optional = true }
 serde = { version = "1.0.214", features = ["derive"] }
 serde_json = "1.0.132"
 textgridde-rs = {version = "0.1.1", optional = true}
@@ -18,12 +20,13 @@ threadpool = "1.8.1"
 tqdm = {version ="0.7.0", optional = true}
 uuid = {version ="1.11.0", features = ["v4", "serde"]}
 wavers = {version = "1.4.3", optional = true}
-yin = {version = "0.2.0", optional = true}
 
 [features]
-default = []
-generator = ["textgridde-rs", "tqdm", "wavers", "yin", "chrono", "translate"]
+default = ["generator", "translate"]
+generator = ["textgridde-rs", "tqdm", "wavers", "chrono", "translate", "rsworld", "rsworld-sys"]
 translate = ["ipa-translate"]
+rsworld = ["dep:rsworld"]
+rsworld-sys = ["dep:rsworld-sys"]
 
 [profile.dev]
 features = ["generator", "translate"]
