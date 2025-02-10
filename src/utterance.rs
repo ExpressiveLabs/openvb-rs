@@ -23,7 +23,7 @@ pub struct FileDescriptor {
     pub language: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub extras: Option<HashMap<String, f32>>,
-    
+
     pub labels: Vec<Utterance>
 }
 
@@ -72,5 +72,9 @@ impl Utterance {
         let pitch = data[0].bits(57..64) as u8;
 
         utterance
+    }
+
+    pub fn length(&self) -> Timestamp {
+        self.end - self.start
     }
 }
