@@ -46,6 +46,12 @@ impl Timestamp {
             value: (samples as f64 * 1_000_000.0 / sample_rate) as u64
         }
     }
+
+    pub fn zero() -> Self {
+        Timestamp {
+            value: 0
+        }
+    }
 }
 
 // Implement operators
