@@ -13,3 +13,5 @@ pub mod ipa;
 
 #[cfg(feature = "translate")]
 pub mod arpa;
+
+mod scrape;

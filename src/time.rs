@@ -4,17 +4,17 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Default, Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
 pub struct Timestamp {
-    pub value: u64
+    pub value: i64
 }
 
 impl Timestamp {
-    pub fn new(value: u64) -> Self {
+    pub fn new(value: i64) -> Self {
         Timestamp {
             value
         }
     }
 
-    pub fn from_minified(value: u64) -> Self {
+    pub fn from_minified(value: i64) -> Self {
         Timestamp {
             value
         }
@@ -25,7 +25,7 @@ impl Timestamp {
     }
     pub fn from_seconds(seconds: f64) -> Self {
         Timestamp {
-            value: (seconds * 1_000_000.0) as u64
+            value: (seconds * 1_000_000.0) as i64
         }
     }
 
@@ -34,7 +34,7 @@ impl Timestamp {
     }
     pub fn from_milliseconds(milliseconds: f64) -> Self {
         Timestamp {
-            value: (milliseconds * 1_000.0) as u64
+            value: (milliseconds * 1_000.0) as i64
         }
     }
 
@@ -43,7 +43,7 @@ impl Timestamp {
     }
     pub fn from_samples(samples: usize, sample_rate: f64) -> Self {
         Timestamp {
-            value: (samples as f64 * 1_000_000.0 / sample_rate) as u64
+            value: (samples as f64 * 1_000_000.0 / sample_rate) as i64
         }
     }
 
@@ -92,7 +92,7 @@ impl std::ops::Mul<f64> for Timestamp {
 
     fn mul(self, other: f64) -> Timestamp {
         Timestamp {
-            value: (self.value as f64 * other) as u64
+            value: (self.value as f64 * other) as i64
         }
     }
 }
@@ -102,20 +102,20 @@ impl std::ops::Div<f64> for Timestamp {
 
     fn div(self, other: f64) -> Timestamp {
         Timestamp {
-            value: (self.value as f64 / other) as u64
+            value: (self.value as f64 / other) as i64
         }
     }
 }
 
 impl std::ops::MulAssign<f64> for Timestamp {
     fn mul_assign(&mut self, other: f64) {
-        self.value = (self.value as f64 * other) as u64;
+        self.value = (self.value as f64 * other) as i64;
     }
 }
 
 impl std::ops::DivAssign<f64> for Timestamp {
     fn div_assign(&mut self, other: f64) {
-        self.value = (self.value as f64 / other) as u64;
+        self.value = (self.value as f64 / other) as i64;
     }
 }
 
@@ -161,14 +161,14 @@ impl Timestamp {
 
     pub fn sqrt(self) -> Timestamp {
         Timestamp {
-            value: (self.value as f64).sqrt() as u64
+            value: (self.value as f64).sqrt() as i64
         }
     }
 }
 
 // Implement from
-impl From<u64> for Timestamp {
-    fn from(value: u64) -> Self {
+impl From<i64> for Timestamp {
+    fn from(value: i64) -> Self {
         Timestamp {
             value
         }

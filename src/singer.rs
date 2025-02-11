@@ -1,4 +1,4 @@
-use std::{path::PathBuf, sync::Arc};
+use std::{path::{Path, PathBuf}, sync::Arc};
 
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
@@ -32,8 +32,9 @@ impl Singer {
         }
     }
 
-    pub fn load(path: &PathBuf) -> Result<Self> {
+    pub fn load<P: AsRef<Path>>(path: P) -> Result<Self> {
         // Get file extension
+        let path = path.as_ref();
         let ext = path.extension().unwrap().to_str().unwrap();
 
         // Branch based on file extension: json or bin
@@ -44,12 +45,14 @@ impl Singer {
         }
     }
 
-    fn load_bin(path: &PathBuf) -> Result<Self> {
+    fn load_bin<P: AsRef<Path>>(path: P) -> Result<Self> {
         let data = std::fs::read(path)?;
         Ok(bincode::deserialize(&data)?)
     }
 
-    fn load_json(path: &PathBuf) -> Result<Self> {
+    fn load_json<P: AsRef<Path>>(path: P) -> Result<Self> {
+        let path = path.as_ref();
+
         let data = std::fs::read_to_string(path)?;
         let mut res: Self = serde_json::from_str(&data)?;
 

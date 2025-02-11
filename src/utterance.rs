@@ -53,11 +53,11 @@ pub struct Utterance {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub areas: Option<HashMap<String, [Timestamp; 2]>>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub minified: Option<[u64; 3]>
+    pub minified: Option<[i64; 3]>
 }
 
 impl Utterance {
-    pub fn from_minified(data: &[u64; 3]) -> Self {
+    pub fn from_minified(data: &[i64; 3]) -> Self {
         let mut utterance = Utterance::default();
         utterance.minified = Some(*data);
 
