@@ -23,7 +23,7 @@ pub struct FileDescriptor {
     pub language: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub extras: Option<HashMap<String, f32>>,
-    
+
     pub labels: Vec<Utterance>
 }
 
@@ -53,11 +53,11 @@ pub struct Utterance {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub areas: Option<HashMap<String, [Timestamp; 2]>>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub minified: Option<[u64; 3]>
+    pub minified: Option<[i64; 3]>
 }
 
 impl Utterance {
-    pub fn from_minified(data: &[u64; 3]) -> Self {
+    pub fn from_minified(data: &[i64; 3]) -> Self {
         let mut utterance = Utterance::default();
         utterance.minified = Some(*data);
 
@@ -72,5 +72,9 @@ impl Utterance {
         let pitch = data[0].bits(57..64) as u8;
 
         utterance
+    }
+
+    pub fn length(&self) -> Timestamp {
+        self.end - self.start
     }
 }

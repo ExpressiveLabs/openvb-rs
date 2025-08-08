@@ -1,33 +1,28 @@
 use std::path::Path;
 
 use anyhow::{Result, bail};
+use rsworld::{dio, stonemask};
+use rsworld_sys::DioOption;
 use wavers::{Samples, Wav};
-use yin::Yin;
 
 
 use crate::utterance::Utterance;
 
-pub fn detect_pitch_from_samples(samples: &[f64], sample_rate: f64) -> f32 {
-    const FMAX: f64 = 800.0;
-    
-    let samples = if (samples.len() as f64) < FMAX {
-        // Pad symmetrically with zeros
-        let pad = (FMAX + 1.0 - samples.len() as f64).round() as usize;
-        let mut padded = vec![0.0; pad];
-        padded.extend_from_slice(samples);
-        padded.extend_from_slice(&vec![0.0; pad]);
-
-        padded
-    } else {
-        samples.to_vec()
+pub fn detect_pitch_from_samples(data: &Vec<f64>, sr: i32) -> f64 {
+    let dio_option = DioOption {
+        f0_floor: 71.0,
+        f0_ceil: 1760.0,
+        frame_period: 5.0,
+        channels_in_octave: 2.0,
+        speed: 1,
+        allowed_range: 0.1,
     };
 
-    // Get the pitch
-    // TODO: figure out these values, they're wrong
-    let estimator = Yin::init(0.05, 50.0, FMAX, sample_rate as usize);
-    let pitch = estimator.estimate_freq(&samples);
+    let (t, rough_f0) = dio(data, sr, &dio_option);
+    let f0 = stonemask(data, sr, &t, &rough_f0);
+    let f0_avg = f0.iter().sum::<f64>() / f0.len() as f64;
 
-    pitch as f32
+    f0_avg
 }
 
 pub fn write_pitch<P: AsRef<Path>>(file: P, config: &mut Vec<Utterance>) -> Result<()> {
@@ -51,13 +46,14 @@ pub fn write_pitch<P: AsRef<Path>>(file: P, config: &mut Vec<Utterance>) -> Resu
             continue;
         }
 
-        let start = utterance.start.samples(sample_rate);
-        let end = utterance.end.samples(sample_rate);
+        let start = utterance.start.samples(sample_rate).max(0);
+        let end = utterance.end.samples(sample_rate).clamp(0, samples.len());
 
-        // println!("Start: {}, End: {}, label: {}", start, end, utterance.curr);
+        assert!(start < end, "Start ({}) must be less than end ({}) (in {:?} @ {})", start, end, file, utterance.curr);
+        // println!("Path: {:?}, Start: {}, End: {}, label: {}", file, start, end, utterance.curr);
 
-        let pitch = detect_pitch_from_samples(&samples[start..end], sample_rate);
-        let midi = ftom(pitch);
+        let pitch = detect_pitch_from_samples(&samples[start..end].to_vec(), wav.sample_rate());
+        let midi = ftom(pitch as f32);
 
         if pitch.is_infinite() || pitch.is_nan() {
             // println!("Pitch is infinite or NaN");

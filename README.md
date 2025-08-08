@@ -7,7 +7,7 @@ The `oto.ini` file standard, used by community-backed singing synthesizers such 
 If you have questions, concerns, or feature ideas, feel free to bring them to the attention of the ExpressiveLabs Language Support team. You can reach them via [language.teams@expressivelabs.net](mailto:language.teams@expressivelabs.net).
 
 ## License
-The [OpenVBconf](ExpressiveLabs/OpenVBconf) standard is dedicated to the public domain under the terms of the Unlicense. Implementations of the standard may differ from this license.
+The [OpenVBconf](https://github.com/ExpressiveLabs/OpenVBconf) standard is dedicated to the public domain under the terms of the Unlicense. Implementations of the standard may differ from this license.
 
 This repository is licensed under the MIT license. See [LICENSE.md](LICENSE.md) for details.<br>
 Copyright &copy; 2024 ExpressiveLabs. All rights reserved.

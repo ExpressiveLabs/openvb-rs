@@ -348,6 +348,8 @@ dependencies = [
  "fixedbitset",
  "intbits",
  "ipa-translate",
+ "rsworld",
+ "rsworld-sys",
  "serde",
  "serde_json",
  "textgridde-rs",
@@ -356,7 +358,6 @@ dependencies = [
  "usid",
  "uuid",
  "wavers",
- "yin",
 ]
 
 [[package]]
@@ -471,6 +472,24 @@ name = "regex-syntax"
 version = "0.8.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "2b15c43186be67a4fd63bee50d0303afffcef381492ebe2c5d87f324e1b8815c"
+
+[[package]]
+name = "rsworld"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "5f9a17d9968e83337c1528b1589e1ee9f4373729cbd4aa6e464649bc55a1a0ec"
+dependencies = [
+ "rsworld-sys",
+]
+
+[[package]]
+name = "rsworld-sys"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e6f3d097f63fd46fbf37066a56d14ff44d6bafe8a9decd6f6cab2d7e4409ada0"
+dependencies = [
+ "cc",
+]
 
 [[package]]
 name = "rustc_version"
@@ -974,9 +993,3 @@ checksum = "6f42320e61fe2cfd34354ecb597f86f413484a798ba44a8ca1165c58d42da6c1"
 dependencies = [
  "bitflags 2.9.1",
 ]
-
-[[package]]
-name = "yin"
-version = "0.2.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4ce7a90f6c2b0620e60f12f7636292a4f563ba46aa1901322f42662ff8e0be68"

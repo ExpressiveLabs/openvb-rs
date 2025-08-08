@@ -24,7 +24,7 @@ const SILENCE: [&str; 4] = ["sil", "pau", "br", "cl"];
 //     - is_vowel
 //     - ???
 //     Pitch: 7+1 bits
-//  
+//
 //     LABEL:
 //     [16]|[16]|[16]|[8]|[7] -> PREV|CURR|NEXT|FLAGS|PITCH
 //
@@ -35,7 +35,7 @@ pub struct PhonemeEncoder;
 impl PhonemeEncoder {
     pub fn encode(data: &str) -> u16 {
         let mut phoneme = 0;
-        
+
         // Split data into phoneme and diacritic
         let mut phoneme_data = data;
         let mut diacritic_data = "";
