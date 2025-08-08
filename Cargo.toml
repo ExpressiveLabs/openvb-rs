@@ -25,7 +25,7 @@ wavers = {version = "1.4.3", optional = true}
 
 [features]
 default = []
-generator = ["textgridde-rs", "tqdm", "wavers", "yin", "chrono", "translate", "rsworld", "rsworld-sys"]
+generator = ["textgridde-rs", "tqdm", "wavers", "chrono", "translate", "rsworld", "rsworld-sys"]
 translate = ["ipa-translate"]
 rsworld = ["dep:rsworld"]
 rsworld-sys = ["dep:rsworld-sys"]
