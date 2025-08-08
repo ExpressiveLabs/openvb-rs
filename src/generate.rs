@@ -4,6 +4,7 @@ use serde::{Deserialize, Serialize};
 use anyhow::Result;
 
 use crate::{library::Library, parser::textgrid::from_textgrid, utterance::FileDescriptor, tools::ipa::FromIPA, Singer};
+use crate::parser::lab::from_lab;
 
 #[derive(Default, Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 pub enum SourcePhoneset {
@@ -87,7 +88,11 @@ impl GeneratorConfig {
         // Filter out non-wav files
         let files = files.filter(|f| {
             let file = f.as_ref().unwrap().path();
-            file.extension().unwrap().to_str().unwrap() == "wav"
+            if let Some(ext) = file.extension() {
+                ext.eq("wav")
+            } else {
+                false
+            }
         }).map(|f| f.unwrap().path()).collect::<Vec<PathBuf>>();
 
         let pool = threadpool::ThreadPool::new(12);
@@ -105,9 +110,7 @@ impl GeneratorConfig {
                     SourceDataType::OtoIni => {
                         unimplemented!()
                     },
-                    SourceDataType::Label => {
-                        unimplemented!()
-                    },
+                    SourceDataType::Label => from_lab(&file, None),
                     SourceDataType::Empty => {
                         Ok(FileDescriptor {
                             path: file,
@@ -161,6 +164,24 @@ mod tests {
             path: PathBuf::from(std::env::var("TEXTGRID_TEST_DATASET").unwrap()),
             phoneset: SourcePhoneset::IPA,
             data_type: SourceDataType::TextGrid,
+            name: String::from("Test Dataset"),
+            language: String::from("en")
+        };
+
+        let singer = cfg.build().unwrap();
+
+        let path = cfg.path.join("singer.json");
+        singer.save(&path).unwrap();
+    }
+
+    #[test]
+    fn test_from_ds() {
+        dotenv().ok();
+
+        let cfg = GeneratorConfig {
+            path: PathBuf::from(std::env::var("DS_TEST_DATASET").unwrap()),
+            phoneset: SourcePhoneset::Arpabet,
+            data_type: SourceDataType::Label,
             name: String::from("Test Dataset"),
             language: String::from("en")
         };

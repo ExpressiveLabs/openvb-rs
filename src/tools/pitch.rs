@@ -23,6 +23,7 @@ pub fn detect_pitch_from_samples(samples: &[f64], sample_rate: f64) -> f32 {
     };
 
     // Get the pitch
+    // TODO: figure out these values, they're wrong
     let estimator = Yin::init(0.05, 50.0, FMAX, sample_rate as usize);
     let pitch = estimator.estimate_freq(&samples);
 

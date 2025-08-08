@@ -3,7 +3,7 @@ use std::{path::PathBuf, sync::Arc};
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 use anyhow::Result;
-
+use usid::USID;
 use crate::{library::Library, utterance::FileDescriptor};
 
 #[derive(Default, Debug, Clone, Serialize, Deserialize)]
@@ -102,7 +102,7 @@ impl Singer {
 #[derive(Default, Debug, Clone, Serialize, Deserialize)]
 pub struct Meta {
     pub name: String,
-    pub uuid: Uuid,
+    pub id: USID,
     pub icon: PathBuf
 }
 
